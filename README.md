@@ -1,3 +1,10 @@
+#..Md.MokammalHossenFarnan
+#..ID:130117
+#..Department of CSE,PUST
+#..Heart Disease Prediction 
+#..Used algorithm  Logistic Regression & Random Forest algorithm (Naive,without tune,manually tune,)
+
+
 install.packages("caret",
                  repos = "http://cran.r-project.org", 
                  dependencies = c("Depends", "Imports", "Suggests"))
