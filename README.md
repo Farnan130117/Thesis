@@ -91,3 +91,80 @@ testData <-  ValidSet
 #Creating_list_for_Storing_AUC_&_Accuracy
 AUC = list()
 Accuracy = list()
+
+#Random_forest_Naive_approach
+
+install.packages("randomForest")
+library(caret)
+library(ROCR)
+library(pROC)
+library(plyr)
+library(randomForest)
+
+data1 <-heart.data
+str(data1)
+
+summary(data1)
+summary(TrainSet)
+summary(ValidSet)
+
+set.seed(x)
+
+#Naive_Approach_Model
+
+model1 <- randomForest(num ~ ., data = TrainSet, importance = TRUE)
+model1
+
+ RFPrediction1 <- predict(model1, ValidSet)
+ RFPredictionprob1 = predict(model1,ValidSet,type="prob")[, 2]
+
+ RFConfMat1 <- confusionMatrix(RFPrediction1, ValidSet[,"num"])
+
+ AUC$RFWT <- roc(as.numeric(ValidSet$num),as.numeric(as.matrix((RFPredictionprob1))))$auc
+ Accuracy$RFWT <- RFConfMat1$overall['Accuracy']
+AUC$RFWT 
+Accuracy$RFWT
+
+#Manuaaly_Tunning_model
+
+model2 <- randomForest(num ~ ., data = TrainSet, ntree = 500, mtry = 2, importance = TRUE)
+model2
+
+ RFPrediction2 <- predict(model2, ValidSet)
+ RFPredictionprob2 = predict(model2,ValidSet,type="prob")[, 2]
+
+   RFConfMat2 <- confusionMatrix(RFPrediction2, ValidSet[,"num"])
+
+   AUC$RFT <- roc(as.numeric(ValidSet$num),as.numeric(as.matrix((RFPredictionprob2))))$auc
+   Accuracy$RFT <- RFConfMat2$overall['Accuracy']
+
+ AUC$RFT 
+ Accuracy$RFT
+ #Logistic regression
+
+library(caret)
+library(ROCR)
+library(pROC)
+
+
+set.seed(x)
+logRegModel <- train(num ~ ., data=trainData, method = 'glm', family = 'binomial')
+logRegPrediction <- predict(logRegModel, testData)
+logRegPredictionprob <- predict(logRegModel, testData, type='prob')[2]
+logRegConfMat <- confusionMatrix(logRegPrediction, testData[,"num"])
+#ROC Curve
+library(pROC)
+AUC$logistinRegfinal <- roc(as.numeric(testData$num),as.numeric(as.matrix((logRegPredictionprob))))$auc
+Accuracy$logistinRegfinal <- logRegConfMat$overall['Accuracy'] #found names with str(logRegConfMat)
+
+ 
+AUC$logistinRegfinal
+Accuracy$logistinRegfinal
+AUC
+Accuracy
+
+#to_save_the_file
+
+write.csv(trainData,'train.csv')
+write.csv(testData,'test.csv')
+
